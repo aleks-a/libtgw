@@ -10,8 +10,6 @@
 #======================================================================
 
 #
-# USAGE: run_corr_test.sh <RESULTS> <OUTFILE> <BINARY> <ARGS>
-#
 # Exit codes:
 #    0: OK
 #    1: Not enough arguments
@@ -43,6 +41,7 @@ elif [ ! -r "$RES_FILE" ] ; then
 fi
 
 #Check output file
+mkdir -p $(dirname "$OUT_FILE" 2> /dev/null) > /dev/null
 touch "$OUT_FILE" 2> /dev/null
 if [ $? != 0 ] || [ ! -w "$OUT_FILE" ] ; then
 	echo "Output file \"$OUT_FILE\" isn't writeable" >&2
@@ -70,7 +69,7 @@ fi
 "$BIN_FILE" $ARGS > "$OUT_FILE" 2>&1
 RC=$?
 if [ $RC != 0 ] ; then
-	echo "\"$BIN_FILE\" failed with return code $RC"
+	echo "\"$BIN_FILE\" failed with return code $RC" >&2
 	exit 3
 elif [ "$TGW_TEST_DEBUG" = "1" ] ; then
 	echo "\"$BIN_FILE\" returned with code $RC"
@@ -79,8 +78,8 @@ fi
 diff -q "$RES_FILE" "$OUT_FILE" > /dev/null 2>&1
 RC=$?
 if [ $RC != 0 ] ; then
-	echo "\"$BIN_FILE\" failed: output didn't match"
-	diff "$RES_FILE" "$OUT_FILE"
+	echo "\"$BIN_FILE\" failed: output didn't match" >&2
+	diff "$RES_FILE" "$OUT_FILE" >&2
 	exit 4
 fi
 
