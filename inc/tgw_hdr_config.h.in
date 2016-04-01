@@ -1,0 +1,76 @@
+/* tgw_hdr_config.h[.in]
+ *
+ * Copyright (C) 2016 aleks-a
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ */
+
+#ifndef LIBTGW__TGW_HDR_CONFIG__H_IN
+#define LIBTGW__TGW_HDR_CONFIG__H_IN
+
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <signal.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
+typedef sig_atomic_t tgw_intr_safe;
+
+
+/* Currently defined in tgw_util.c ! */
+void debug_out(const char *fmt, ...);
+
+#define TGW_MAJOR_VERSION				@TGW_MAJOR_VERSION@
+#define TGW_MINOR_VERSION				@TGW_MINOR_VERSION@
+#define TGW_PATCH_VERSION				@TGW_PATCH_VERSION@
+#define TGW_VERSION_INT					\
+	(@TGW_MAJOR_VERSION@*100000 + @TGW_MINOR_VERSION@*1000 + @TGW_PATCH_VERSION@)
+#define TGW_VERSION_STRING				\
+	"@TGW_MAJOR_VERSION@.@TGW_MINOR_VERSION@.@TGW_PATCH_VERSION@"
+
+
+ 
+#cmakedefine TGW_NO_MALLOC
+#cmakedefine TGW_REG_ORDERED_NAMES
+
+
+#cmakedefine TGW_REG_LOCK				@TGW_REG_LOCK@
+#define TGW_RLOCK_NONE					1
+#define TGW_RLOCK_PTHREAD				2
+
+#ifndef TGW_REG_LOCK
+	#error "Please define TGW_REG_LOCK"
+#elif (TGW_REG_LOCK < 1 || TGW_REG_LOCK > 2)
+	#error "Invalid value for TGW_REG_LOCK"
+#endif
+
+
+#cmakedefine TGW_COMPONENT_COUNT		@TGW_COMPONENT_COUNT@
+#ifndef TGW_COMPONENT_COUNT
+	#error "Please define TGW_COMPONENT_COUNT"
+#endif
+
+#cmakedefine TGW_ERR_CODE_COUNT			@TGW_ERR_CODE_COUNT@
+#ifndef TGW_ERR_CODE_COUNT
+	#error "Please define TGW_ERR_CODE_COUNT"
+#endif
+
+#cmakedefine TGW_LOG_LEVEL_COUNT		@TGW_LOG_LEVEL_COUNT@
+#ifndef TGW_LOG_LEVEL_COUNT
+	#error "Please define TGW_LOG_LEVEL_COUNT"
+#endif
+
+
+
+#ifdef __cplusplus
+}
+#endif
+
+
+#endif
+

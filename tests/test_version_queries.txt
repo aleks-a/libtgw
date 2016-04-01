@@ -1,0 +1,5 @@
+Major version:     0
+Minor version:     2
+Patch version:     0
+Version int:       2000
+Version str:       0.2.0
