@@ -26,3 +26,12 @@
 *.exe
 *.out
 *.app
+
+# Build sys
+Makefile
+build*/
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+cmake_install.cmake 
+install_manifest.txt

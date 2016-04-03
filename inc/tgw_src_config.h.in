@@ -1,0 +1,26 @@
+/* tgw_src_config.h[.in]
+ *
+ * Copyright (C) 2016 aleks-a
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ */
+ 
+#ifndef LIBTGW__CONFIG__H_IN
+#define LIBTGW__CONFIG__H_IN
+
+#include <stdlib.h>
+#include <string.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif
+
