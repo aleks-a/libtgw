@@ -1,0 +1,13 @@
+
+
+
+    # A COMMENT
+    
+  a   	=  	b is this "value or or"  \
+			or what "else is"
+  
+  
+  b = another         
+  
+     c="value"   
+d="something"
