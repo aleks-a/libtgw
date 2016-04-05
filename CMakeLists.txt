@@ -75,6 +75,13 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 endif()
 
 
+add_custom_target(
+	build_stupid
+	WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/stupid"
+	COMMAND cmake . && make
+)
+
+
 
 include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/inc

@@ -1,0 +1,9 @@
+
+source-path				= tests
+binary-path 			= build
+result-path				= tests
+output-path				= build/test_out
+script-output-path		= build
+stupid-list				= stupid-list.txt
+flatten-bin-paths		= false
+generate-cmake-files	= true
