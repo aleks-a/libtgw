@@ -13,7 +13,7 @@
 add_definitions(-DTGW_TEST_SRC_DIR="${CMAKE_SOURCE_DIR}/tests")
 include_directories(fw)
 add_library(test_fw STATIC fw/tgw_test_fw.c)
-set(LIBS "test_fw tgw")
+set(STUPID_AUTOBUILD_LIBS test_fw tgw)
 
 execute_process(
 	COMMAND "${CMAKE_SOURCE_DIR}/stupid/generate_scripts.sh"
@@ -25,8 +25,9 @@ execute_process(
 		"${LIBS}"
 )
 
-include("${CMAKE_BINARY_DIR}/stupid_autobuild.cmake")
+include("${CMAKE_CURRENT_SOURCE_DIR}/stupid_autobuild.cmake")
 
+add_subdirectory(sub1)
 
 # Non-autobuilt tests
 

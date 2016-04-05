@@ -1,2 +1,2 @@
-./stupid.txt
 ./sub1/stupid.txt
+./stupid.txt

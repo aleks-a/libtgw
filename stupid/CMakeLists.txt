@@ -23,7 +23,7 @@ elseif ("${CMAKE_C_COMPILER_ID}" MATCHES "Clang")
 endif()
 
 
-set(STUPID_GENERATE_SRCS gen_config.cpp stupid_common.cpp stupid_generate.cpp gen_token_table.cpp)
+set(STUPID_GENERATE_SRCS gen_config.cpp stupid_common.cpp stupid_generate.cpp gen_token_table.cpp write_cmake.cpp)
 
 add_executable(stupid-generate ${STUPID_GENERATE_SRCS})
 

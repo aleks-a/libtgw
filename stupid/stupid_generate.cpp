@@ -2,6 +2,7 @@
 
 #include "gen_config.h"
 #include "gen_token_table.h"
+#include "write_cmake.h"
 
 int main(int argc, char **argv)
 {
@@ -20,10 +21,11 @@ int main(int argc, char **argv)
 	gen_config cfg;
 	cfg.root_dir = argv[2];
 	
-	lines_t stupid_fl, collected, tmpl;
-	lines_t::const_iterator lit, lit2;
+	lines_t stupid_fl, tmpl;
+	lines_t::const_iterator lit;
 	std::string str, dname;
-	token_table_t tt;
+	token_table_t tt, tt_tmp;
+	token_table_t::iterator tt_it;
 	try
 	{
 		load_gen_config(argv[1], cfg);
@@ -33,20 +35,26 @@ int main(int argc, char **argv)
 		for(lit = stupid_fl.begin(); lit != stupid_fl.end(); ++lit)
 		{
 			tmpl.clear();
+			tt_tmp.clear();
+			
 			str = cfg.root_dir + FSS + cfg.src_path + FSS + *lit;
 			read_file(str.c_str(), tmpl);
 			
 			std::sort(tmpl.begin(), tmpl.end());
 			
-			// Append dirname and add to main vector
+			parse_tokens(tmpl, tt_tmp);
+			
 			dname = path_rem_dot(dirname(*lit) + FSS);
-			for(lit2 = tmpl.begin(); lit2 != tmpl.end(); ++lit2)
+			str = cfg.root_dir + FSS + cfg.src_path + FSS + dname;
+			write_cmake(str, cfg, tt_tmp);
+			
+			for(tt_it = tt_tmp.begin(); tt_it != tt_tmp.end(); ++tt_it)
 			{
-				collected.push_back(dname + *lit2);
+				tt.push_back(*tt_it);
+				tt.back().name = dname + tt.back().name;
 			}
 		}
 		
-		parse_tokens(collected, tt);
 		dump_tokens(tt);
 	}
 	catch(std::exception &e)

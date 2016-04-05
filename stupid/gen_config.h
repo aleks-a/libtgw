@@ -22,7 +22,6 @@ struct gen_config
 	std::string script_out_path;
 	std::string stupid_list;
 	
-	
 	bool flatten_bin_paths;
 	bool generate_cmake_files;
 };
