@@ -37,6 +37,6 @@ cmake_install.cmake
 install_manifest.txt
 
 # Stupid
-stupid_autobuild.cmake
-stupid/stupid-generate
+stupid_build.cmake
+stupid/stupid-gen-cmake
 

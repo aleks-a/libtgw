@@ -56,6 +56,7 @@ struct st_node_t
 	
 	// Default values if not supplied
 	bool generate_cmakelists;
+	bool generate_subdir_incs;
 	
 	// Directory name, relative to parent. Does not contain
 	// FS separators or dots

@@ -25,9 +25,7 @@ execute_process(
 		"${LIBS}"
 )
 
-include("${CMAKE_CURRENT_SOURCE_DIR}/stupid_autobuild.cmake")
-
-add_subdirectory(sub1)
+include("${CMAKE_CURRENT_SOURCE_DIR}/stupid_build.cmake")
 
 # Non-autobuilt tests
 

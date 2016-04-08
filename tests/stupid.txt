@@ -1,5 +1,7 @@
 # This here is a file
-              test_name_incr corr,mem,cov			build=true
+%build-libs  = "${STUPID_AUTOBUILD_LIBS}"
+
+             test_name_incr corr,mem,cov			build=true
 test_version_queries	 corr,mem,cov,prof,cmiss              build=true     
 
 %subdir sub1
@@ -9,7 +11,7 @@ test_version_queries	 corr,mem,cov,prof,cmiss              build=true
     #Yet
 	#Another
 
-     
+     %generate-subdir-incs = yes
 	 #Last
 	 
 # More comments

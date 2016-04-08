@@ -21,7 +21,7 @@ st_test_t::st_test_t():
 }
 
 st_node_t::st_node_t():
-	generate_cmakelists(false)
+	generate_cmakelists(false), generate_subdir_incs(false)
 {	
 }
 
@@ -196,6 +196,14 @@ static void handle_special_line(const kv_vec_t &vec,
 		{
 			node.generate_cmakelists = parse_bool(val);
 		}
+		else if(key == "generate-subdir-incs")
+		{
+			node.generate_subdir_incs = parse_bool(val);
+		}
+		else if(key == "build-libs")
+		{
+			node.build_libs = val;
+		}
 		else
 		{
 			throw stupid_exception("Invalid key %s", key.c_str());
@@ -213,6 +221,10 @@ static void handle_special_line(const kv_vec_t &vec,
 				}
 				
 				st_node_t tmp_node;
+				
+				// Copy from parent
+				tmp_node.build_libs = node.build_libs;
+				
 				tmp_node.name = it->second;
 				tmp_node.path = node.path + it->second + FSS;
 				node.children.push_back(tmp_node);
@@ -237,6 +249,10 @@ static void handle_test_var(const kv_pair_t &pair,
 	else if(pair.first == "build-srcs")
 	{
 		test.build_srcs = pair.second;
+	}
+	else if(pair.first == "build-libs")
+	{
+		test.build_libs = pair.second;
 	}
 	else
 	{
@@ -327,7 +343,8 @@ static void dump_node(const st_node_t &n, size_t indent)
 	
 	dump_kv("Generate CMakeLists:",
 		bool_str(n.generate_cmakelists),	indent, '=');
-	
+	dump_kv("Generate subdir incs:",
+		bool_str(n.generate_subdir_incs),	indent,	'=');
 	
 	
 	std::vector<st_test_t>::const_iterator t_it;
