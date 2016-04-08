@@ -4,6 +4,8 @@
 #include "gen_token_table.h"
 #include "write_cmake.h"
 
+static void mk_corr_script(const gen_config &cfg, const token_table_t &tt);
+
 int main(int argc, char **argv)
 {
 	s_info("---------- stupid-generate\n");
@@ -55,6 +57,8 @@ int main(int argc, char **argv)
 			}
 		}
 		
+		
+		mk_corr_script(cfg, tt);
 		dump_tokens(tt);
 	}
 	catch(std::exception &e)
@@ -68,4 +72,62 @@ int main(int argc, char **argv)
 	return 0;
 }
 
+static std::string mk_bin_path(const gen_config &cfg, const std::string &name)
+{
+	std::string tmp;
+	tmp = (cfg.flatten_bin_paths) ? basename(name) : name;
+	return cfg.root_dir + FSS + cfg.bin_path + FSS + tmp;
+}
+
+static std::string mk_res_path(const gen_config &cfg, const std::string &name)
+{
+	return cfg.root_dir + FSS + cfg.res_path + FSS + name;
+}
+
+static std::string mk_out_path(const gen_config &cfg, const std::string &name)
+{
+	return cfg.root_dir + FSS + cfg.out_path + FSS + name;
+}
+
+static void mk_corr_script(const gen_config &cfg, const token_table_t &tt)
+{
+	std::string path = cfg.root_dir + FSS + cfg.script_out_path + FSS + "run_corr_tests.sh";
+	std::ofstream ofs(path.c_str(), std::ios_base::out | std::ios_base::trunc);
+	if( ! ofs.good() )
+	{
+		throw stupid_exception("Failed to open file: %s", path.c_str());
+	}
+	
+	ofs << "#/bin/sh" << std::endl << std::endl;
+	ofs << "mkdir -p \"" << mk_out_path(cfg, "") << "\"" << std::endl << std::endl;
+	
+	token_table_t::const_iterator it;
+	std::string tmp;
+	for(it = tt.begin(); it != tt.end(); ++it)
+	{
+		if( ! (*it).builds.corr ) { continue; }	
+		ofs << "\"" << mk_bin_path(cfg, (*it).name) << "\" "
+			<< (*it).exec_args << " > \""
+			<< mk_out_path(cfg, (*it).name + ".run.txt")
+			<< "\" 2>&1" << std::endl;
+			
+			
+		ofs << "diff \"" << mk_out_path(cfg, (*it).name + ".run.txt")
+			<< "\" \"" << mk_res_path(cfg, (*it).name+".txt")
+			<< "\" > \"" << mk_out_path(cfg, (*it).name + ".diff.txt")
+			<< "\"" << std::endl;
+		
+		ofs << "RC=$?" << std::endl
+			<< "if [ $RC != 0 ] ; then" << std::endl
+			<< "\techo \"" << (*it).name << "    [Fail]\"" << std::endl
+			<< "\techo \"********************************************************************************\"" << std::endl
+			<< "\tcat \"" << mk_out_path(cfg, (*it).name + ".out.txt") << "\"" << std::endl
+			<< "\techo \"--------------------------------------------------------------------------------\"" << std::endl
+			<< "\tcat \"" << mk_out_path(cfg, (*it).name + ".diff.txt") << "\"" << std::endl
+			<< "\techo \"********************************************************************************\"" << std::endl
+			<< "else" << std::endl
+			<< "\techo \"" << (*it).name << "    [OK]\"" << std::endl
+			<< "fi" << std::endl << std::endl;
+	}
+}
 

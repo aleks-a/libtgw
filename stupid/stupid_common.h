@@ -1,3 +1,11 @@
+/* stupid_common.h
+ *
+ * Copyright (C) 2016 aleks-a
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ */
+ 
 #ifndef STUPID__STUPID_COMMON__H
 #define STUPID__STUPID_COMMON__H
 
@@ -12,17 +20,22 @@
 #include <cstdlib>
 
 #define s_info(...)		fprintf(stdout, __VA_ARGS__)
+#define s_dump(...)		fprintf(stdout, __VA_ARGS__)
 #define s_warn(...)		fprintf(stderr, __VA_ARGS__)
 #define s_err(...)		fprintf(stderr, __VA_ARGS__)
 
 #define FSS_C '/'
 #define FSS "/"
 
+
+typedef std::vector<std::string> strvec_t;
+typedef std::pair<std::string, std::string> kv_pair_t;
+typedef std::vector<kv_pair_t> kv_vec_t;
+
 typedef std::vector<std::string> lines_t;
 typedef std::map<std::string, std::string> keyval_map_t;
 
 
-void trim(std::string &str);
 std::string basename(const std::string &str);
 std::string dirname(const std::string &str);
 std::string path_rem_dot(const std::string &str);

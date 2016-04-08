@@ -1,6 +1,9 @@
 # This here is a file
-              test_name_incr corr,mem,cov			autobuild=true
-test_version_queries	 corr,mem,cov,prof,cmiss              autobuild=true                         
+              test_name_incr corr,mem,cov			build=true
+test_version_queries	 corr,mem,cov,prof,cmiss              build=true     
+
+%subdir sub1
+%generate-cmakelists = 0                    
 # Comment
 #Another
     #Yet
