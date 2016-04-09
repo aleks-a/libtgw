@@ -13,11 +13,9 @@
 add_definitions(-DTGW_TEST_SRC_DIR="${CMAKE_SOURCE_DIR}/tests")
 include_directories(fw)
 add_library(test_fw STATIC fw/tgw_test_fw.c)
-set(STUPID_AUTOBUILD_LIBS test_fw tgw)
+set(TEST_LIBS test_fw tgw)
 
 
-
-include("${CMAKE_CURRENT_SOURCE_DIR}/stupid_build.cmake")
 
 # Non-autobuilt tests
 

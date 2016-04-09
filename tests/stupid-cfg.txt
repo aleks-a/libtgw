@@ -1,4 +1,0 @@
-
-
-output-path				= ../build/test_out
-flatten-bin-paths		= false
