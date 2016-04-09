@@ -23,16 +23,34 @@ elseif ("${CMAKE_C_COMPILER_ID}" MATCHES "Clang")
 endif()
 
 
-#set(STUPID_GENERATE_SRCS gen_config.cpp stupid_common.cpp stupid_generate.cpp gen_token_table.cpp write_cmake.cpp)
+set(STUPID_MATRIX_SRCS
+	stupid_matrix.cpp
+	run_command.cpp
+	stupid_common.cpp string_utils.cpp
+	stupid_tree.cpp
+)
 
-#add_executable(stupid-generate ${STUPID_GENERATE_SRCS})
+add_executable(stupid-matrix ${STUPID_MATRIX_SRCS})
+target_link_libraries(stupid-matrix boost_system boost_filesystem)
+
+
+set(STUPID_RUN_SRCS
+	stupid_run.cpp
+	run_command.cpp
+	stupid_common.cpp string_utils.cpp
+	stupid_tree.cpp
+)
+
+add_executable(stupid-run ${STUPID_RUN_SRCS})
+target_link_libraries(stupid-run boost_system boost_filesystem)
+
+
 
 set(STUPID_GEN_CMAKE_SRCS
 	stupid_gen_cmake.cpp
 	stupid_common.cpp string_utils.cpp
 	stupid_tree.cpp
 )
-
 
 add_executable(stupid-gen-cmake ${STUPID_GEN_CMAKE_SRCS})
 

@@ -24,6 +24,8 @@
 #define s_warn(...)		fprintf(stderr, __VA_ARGS__)
 #define s_err(...)		fprintf(stderr, __VA_ARGS__)
 
+#define s_tres(...)		fprintf(stdout, __VA_ARGS__)
+
 #define FSS_C '/'
 #define FSS "/"
 

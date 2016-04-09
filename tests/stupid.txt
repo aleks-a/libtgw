@@ -5,6 +5,7 @@
 test_version_queries	 corr,mem,cov,prof,cmiss              build=true     
 
 %subdir sub1
+%subdir test_sys_tests
 %generate-cmakelists = 0                    
 # Comment
 #Another

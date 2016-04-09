@@ -1,0 +1,5 @@
+%generate-cmakelists = yes
+
+test_rc corr build=yes
+test_diff corr build=yes
+test_not_found corr

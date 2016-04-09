@@ -84,7 +84,11 @@ struct stupid_tree_t
 	
 	// Internal
 	std::string root_path;
+	std::string bin_dir;
+	std::string out_dir;
+	std::string tmp_dir;
 	bool root_node_valid;
+	
 	
 	st_node_t root_node;
 };
