@@ -1,0 +1,12 @@
+# Comment line
+   # next is empty
+   
+   
+corr -DCMAKE_BUILD_TYPE=Debug
+corr -DCMAKE_BUILD_TYPE=Release
+
+cov -DCMAKE_BUILD_TYPE=Coverage
+  
+  
+mem -DCMAKE_BUILD_TYPE=MemTest
+

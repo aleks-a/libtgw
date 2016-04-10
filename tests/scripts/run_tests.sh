@@ -261,12 +261,51 @@ run_mem_test()
 
 clear_cov()
 {
-	echo "CLEAR COV"
+	COV_LOG="${OUT_DIR}/cov_log.txt"
+	echo "" > "$COV_LOG"
+	
+	#lcov --base-directory . --directory . --zerocounters -q
+	lcov --zerocounters \
+		>> "$COV_LOG" 2>&1
+	
+	if [ "$?" != "0" ] ; then
+		echo "lcov failed (see $COV_LOG for log)" >&2
+		exit 1
+	fi
+	echo "" >> "$COV_LOG"
+	echo "" >> "$COV_LOG"
 }
 
 collect_cov()
 {
-	echo "COLLECT COV"
+	COV_FILE="${TMP_DIR}/cov.tmp.info"
+	COV_OUT="${OUT_DIR}/cov"
+	COV_LOG="${OUT_DIR}/cov_log.txt"
+	
+	
+	lcov . -c -o "$COV_INFO" \
+		>> "$COV_LOG" 2>&1
+	if [ "$?" != "0" ] ; then
+		echo "lcov failed (see $COV_LOG for log)" >&2
+		exit 1
+	fi
+	
+	lcov --remove "$COV_INFO" "/usr*" -o "$COV_INFO" \
+		>> "$COV_LOG" 2>&1
+	if [ "$?" != "0" ] ; then
+		echo "lcov failed (see $COV_LOG for log)" >&2
+		exit 1
+	fi
+	
+	rm -rf "$COV_OUT"
+	
+	genhtml -o "$COV_OUT" -t "LibTGW Coverage" --num-spaces 4 \
+		"$COV_INFO" \
+		>> "$COV_LOG" 2>&1
+	if [ "$?" != "0" ] ; then
+		echo "lcov failed (see $COV_LOG for log)" >&2
+		exit 1
+	fi
 }
 
 
