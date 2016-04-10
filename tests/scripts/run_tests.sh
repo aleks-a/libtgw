@@ -167,8 +167,7 @@ load_config()
 	fi
 	
 	CFG_DIR="."
-	if [ "$2" != "" ] ; then CFG_DIR="$2" ; fi
-
+	
 	i=0
 	while read line
 	do
@@ -185,7 +184,6 @@ load_config()
 		exit 1
 	fi
 	
-	shift
 	shift
 	
 	RUN_NAMES=""
@@ -231,7 +229,7 @@ run_corr_test()
 		STATUS="${RED}[RC ${RC}]${CLEAR}"
 	fi
 	
-	printf "(CORR)  %-39s %s\n" "$NAME" "$STATUS"
+	printf "%s (CORR)  %-37s %s\n" "---" "$NAME" "$STATUS"
 }
 
 run_mem_test()
@@ -256,7 +254,7 @@ run_mem_test()
 		STATUS="${RED}[RC ${RC}]${CLEAR}"
 	fi
 	
-	printf "(MEM)   %-39s %s\n" "$NAME" "$STATUS"
+	printf "%s (MEM)   %-37s %s\n" "---" "$NAME" "$STATUS"
 }
 
 clear_cov()
@@ -265,53 +263,68 @@ clear_cov()
 	echo "" > "$COV_LOG"
 	
 	#lcov --base-directory . --directory . --zerocounters -q
-	lcov --zerocounters \
+	#lcov --zerocounters \
+	#lcov --zerocounters \
+	#	>> "$COV_LOG" 2>&1
+	
+	lcov --zerocounters --directory . \
 		>> "$COV_LOG" 2>&1
 	
 	if [ "$?" != "0" ] ; then
-		echo "lcov failed (see $COV_LOG for log)" >&2
+		printf "%s (LCOV0) %-37s %s\n" "---" "$NAME" "${RED}[FAIL]${CLEAR}"
 		exit 1
 	fi
 	echo "" >> "$COV_LOG"
 	echo "" >> "$COV_LOG"
+	
+	printf "%s (LCOV)  %-37s %s\n" "---" "" "${GREEN}[OK]${CLEAR}"
 }
 
 collect_cov()
 {
-	COV_FILE="${TMP_DIR}/cov.tmp.info"
+	COV_FILE="${OUT_DIR}/cov.info"
 	COV_OUT="${OUT_DIR}/cov"
 	COV_LOG="${OUT_DIR}/cov_log.txt"
 	
 	
-	lcov . -c -o "$COV_INFO" \
+	lcov  --directory . -c -o "$COV_FILE" \
 		>> "$COV_LOG" 2>&1
 	if [ "$?" != "0" ] ; then
-		echo "lcov failed (see $COV_LOG for log)" >&2
+		printf "%s (LCOV1) %-37s %s\n" "---" "" "${RED}[FAIL]${CLEAR}"
 		exit 1
 	fi
 	
-	lcov --remove "$COV_INFO" "/usr*" -o "$COV_INFO" \
+	lcov --remove "$COV_FILE" "/usr*" -o "$COV_FILE" \
 		>> "$COV_LOG" 2>&1
 	if [ "$?" != "0" ] ; then
-		echo "lcov failed (see $COV_LOG for log)" >&2
+		printf "%s (LCOV2) %-37s %s\n" "---" "" "${RED}[FAIL]${CLEAR}"
 		exit 1
 	fi
+	
+	lcov --remove "$COV_FILE" "*/tests/*" -o "$COV_FILE" \
+		>> "$COV_LOG" 2>&1
+	if [ "$?" != "0" ] ; then
+		printf "%s (LCOV3) %-37s %s\n" "---" "" "${RED}[FAIL]${CLEAR}"
+		exit 1
+	fi
+	
 	
 	rm -rf "$COV_OUT"
 	
 	genhtml -o "$COV_OUT" -t "LibTGW Coverage" --num-spaces 4 \
-		"$COV_INFO" \
+		"$COV_FILE" \
 		>> "$COV_LOG" 2>&1
 	if [ "$?" != "0" ] ; then
-		echo "lcov failed (see $COV_LOG for log)" >&2
+		printf "%s (LCOV4) %-37s %s\n" "---" "" "${RED}[FAIL]${CLEAR}"
 		exit 1
 	fi
+	
+	printf "%s (LCOV)  %-37s %s\n" "---" "" "${GREEN}[OK]${CLEAR}"
 }
 
 
 run_tests()
 {
-	echo "================================================================================"
 	STYPE=$1
 	
 	if [ "$STYPE" = "cov" ] ; then clear_cov ; fi
@@ -348,8 +361,6 @@ run_tests()
 load_config $@
 
 
-echo ""
-
 if [ "$RUN_INTERNAL" = "true" ] ; then
 	RUN_TYPES="corr_cov corr_nocov mem"
 fi
@@ -357,5 +368,4 @@ fi
 for t in $RUN_TYPES ; do
 	run_tests $t
 done
-echo "================================================================================"
-echo ""
+

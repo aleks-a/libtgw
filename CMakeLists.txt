@@ -46,17 +46,28 @@ set(TGW_ERR_CODE_COUNT 1024 CACHE STRING
 set(TGW_LOG_LEVEL_COUNT 128 CACHE STRING
 	"Maxmimum log level count or default initial size")
 
-
+message("Build type: ${CMAKE_BUILD_TYPE}")
 
 if("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
-
-	set(C_OPTS "-Wall -Wextra -Werror ")
-	set(C_OPTS "${C_OPTS} -ansi -pedantic -pedantic-errors -fno-strict-aliasing")
-	
 	add_definitions(-D_XOPEN_SOURCE=600)
 	
-	set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${C_OPTS} -g -O0")
-	set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${C_OPTS} -O3")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} \
+		-Wall -Wextra -Werror \
+		-ansi -pedantic -pedantic-errors -fno-strict-aliasing \
+	")
+	
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} \
+		-Wall -Wextra -Werror \
+		-std=c++98 -pedantic -pedantic-errors -fno-strict-aliasing \
+	")
+	
+	set(CMAKE_C_FLAGS_COVERAGE   "--coverage -fprofile-arcs -ftest-coverage -g -O0")
+	set(CMAKE_CXX_FLAGS_COVERAGE "--coverage -fprofile-arcs -ftest-coverage -g -O0")
+	
+	set(CMAKE_C_FLAGS_MEMCHECK   "-g -O1")
+	set(CMAKE_CXX_FLAGS_MEMCHECK "-g -O1")
+	
+	#set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${C_OPTS} -O3")
 	
 elseif ("${CMAKE_C_COMPILER_ID}" MATCHES "Clang")
 
@@ -69,6 +80,17 @@ elseif ("${CMAKE_C_COMPILER_ID}" MATCHES "Clang")
 	set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${C_OPTS} -O3")
 	
 endif()
+
+
+MARK_AS_ADVANCED(
+	CMAKE_C_FLAGS_COVERAGE
+	CMAKE_CXX_FLAGS_COVERAGE
+)
+
+MARK_AS_ADVANCED(
+	CMAKE_C_FLAGS_MEMCHECK
+	CMAKE_CXX_FLAGS_MEMCHECK
+)
 
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 	add_definitions(-DTGW_DEBUG)
