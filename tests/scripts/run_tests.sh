@@ -196,7 +196,25 @@ load_config()
 	mkdir -p "$TMP_DIR"
 }
 
-
+print_status()
+{
+	if [ "$3" != "" ] ; then PS_TYPE=$3
+	else PS_TYPE=$STYPE ; fi
+	
+	if [ "$4" = "NONE" ] ; then PS_NAME=""
+	elif [ "$4" != "" ] ; then PS_NAME="$4"
+	else PS_NAME="$NAME" ; fi
+	
+	if [ "$PS_TYPE" = "corr_cov" ] || [ "$PS_TYPE" = "corr_nocov" ]
+	then
+		TS="CORR"
+	else
+		TS=$(echo $PS_TYPE | tr '[:lower:]' '[:upper:]')
+	fi
+	
+	printf "%s %-7s %-37s %s[%s]${CLEAR}\n" \
+		"---" "(${TS})" "$PS_NAME" "$1" "$2"
+}
 
 RED=$(tput setaf 1)
 YELLOW=$(tput setaf 3)
@@ -221,15 +239,13 @@ run_corr_test()
 		diff "$RUN_OUT" "$RES_FILE" > "$DIFF_OUT"
 		RC=$?
 		if [ $RC = 0 ] ; then
-			STATUS="${GREEN}[OK]${CLEAR}"
+			print_status $GREEN OK
 		else
-			STATUS="${RED}[DIFF]${CLEAR}"
+			print_status $RED DIFF
 		fi
 	else
-		STATUS="${RED}[RC ${RC}]${CLEAR}"
+		print_status $RED "RC $RC"
 	fi
-	
-	printf "%s (CORR)  %-37s %s\n" "---" "$NAME" "$STATUS"
 }
 
 run_mem_test()
@@ -245,16 +261,13 @@ run_mem_test()
 	if [ $RC = 0 ] ; then
 		if grep -Fq "ERROR SUMMARY: 0 errors from 0 contexts" "$MEM_OUT"
 		then
-			STATUS="${GREEN}[OK]${CLEAR}"
+			print_status $GREEN OK
 		else
-			STATUS="${YELLOW}[ERR]${CLEAR}"
+			print_status $YELLOW ERR
 		fi
-		
 	else
-		STATUS="${RED}[RC ${RC}]${CLEAR}"
+		print_status $RED "RC $RC"
 	fi
-	
-	printf "%s (MEM)   %-37s %s\n" "---" "$NAME" "$STATUS"
 }
 
 clear_cov()
@@ -271,13 +284,13 @@ clear_cov()
 		>> "$COV_LOG" 2>&1
 	
 	if [ "$?" != "0" ] ; then
-		printf "%s (LCOV0) %-37s %s\n" "---" "$NAME" "${RED}[FAIL]${CLEAR}"
+		print_status $RED FAIL LCOV0 NONE
 		exit 1
 	fi
 	echo "" >> "$COV_LOG"
 	echo "" >> "$COV_LOG"
 	
-	printf "%s (LCOV)  %-37s %s\n" "---" "" "${GREEN}[OK]${CLEAR}"
+	print_status $GREEN OK LCOV NONE
 }
 
 collect_cov()
@@ -290,21 +303,21 @@ collect_cov()
 	lcov  --directory . -c -o "$COV_FILE" \
 		>> "$COV_LOG" 2>&1
 	if [ "$?" != "0" ] ; then
-		printf "%s (LCOV1) %-37s %s\n" "---" "" "${RED}[FAIL]${CLEAR}"
+		print_status $RED FAIL LCOV1 NONE
 		exit 1
 	fi
 	
 	lcov --remove "$COV_FILE" "/usr*" -o "$COV_FILE" \
 		>> "$COV_LOG" 2>&1
 	if [ "$?" != "0" ] ; then
-		printf "%s (LCOV2) %-37s %s\n" "---" "" "${RED}[FAIL]${CLEAR}"
+		print_status $RED FAIL LCOV2 NONE
 		exit 1
 	fi
 	
 	lcov --remove "$COV_FILE" "*/tests/*" -o "$COV_FILE" \
 		>> "$COV_LOG" 2>&1
 	if [ "$?" != "0" ] ; then
-		printf "%s (LCOV3) %-37s %s\n" "---" "" "${RED}[FAIL]${CLEAR}"
+		print_status $RED FAIL LCOV3 NONE
 		exit 1
 	fi
 	
@@ -315,11 +328,11 @@ collect_cov()
 		"$COV_FILE" \
 		>> "$COV_LOG" 2>&1
 	if [ "$?" != "0" ] ; then
-		printf "%s (LCOV4) %-37s %s\n" "---" "" "${RED}[FAIL]${CLEAR}"
+		print_status $RED FAIL LCOV4 NONE
 		exit 1
 	fi
 	
-	printf "%s (LCOV)  %-37s %s\n" "---" "" "${GREEN}[OK]${CLEAR}"
+	print_status $GREEN OK LCOV NONE
 }
 
 
