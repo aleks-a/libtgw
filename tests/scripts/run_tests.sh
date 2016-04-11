@@ -26,7 +26,7 @@ list_intersect()
 
 validate_run_type()
 {
-	ALLOWED="all mem corr cov"
+	ALLOWED="all mem corr cov callg"
 	if ! list_intersect "$ALLOWED" "$1" ; then
 		echo "Illegal run type: $1" >&2
 		exit 1
@@ -35,7 +35,7 @@ validate_run_type()
 
 validate_test_type()
 {
-	ALLOWED="cmiss corr corr_nocov mem"
+	ALLOWED="cmiss corr corr_nocov mem callg"
 	if ! list_intersect "$ALLOWED" "$1" ; then
 		echo "Illegal test type: $1" >&2
 		exit 1
@@ -222,54 +222,6 @@ GREEN=$(tput setaf 2)
 MAG=MAGENTA=$(tput setaf 5)
 CLEAR=$(tput sgr0)
 
-
-
-run_corr_test()
-{
-	RES_FILE="${SRC_DIR}/${NBASE}.corr.txt"
-	RUN_OUT="${OUT_DIR}/${NAME}.corr.txt"
-	DIFF_OUT="${OUT_DIR}/${NAME}.diff.txt"
-	
-	STATUS="${MAG}[WTF]${CLEAR}"
-	
-	"$BINARY" > "$RUN_OUT" 2>&1
-	RC=$?
-	if [ $RC = 0 ] ; then
-		
-		diff "$RUN_OUT" "$RES_FILE" > "$DIFF_OUT"
-		RC=$?
-		if [ $RC = 0 ] ; then
-			print_status $GREEN OK
-		else
-			print_status $RED DIFF
-		fi
-	else
-		print_status $RED "RC $RC"
-	fi
-}
-
-run_mem_test()
-{
-	MEM_OUT="${OUT_DIR}/${NAME}.mem.txt"
-	
-	STATUS="${MAG}[WTF]${CLEAR}"
-	
-	valgrind --leak-check=full --trace-children=yes \
-		"$BINARY" 2> "$MEM_OUT" 1> /dev/null
-	
-	RC=$?
-	if [ $RC = 0 ] ; then
-		if grep -Fq "ERROR SUMMARY: 0 errors from 0 contexts" "$MEM_OUT"
-		then
-			print_status $GREEN OK
-		else
-			print_status $YELLOW ERR
-		fi
-	else
-		print_status $RED "RC $RC"
-	fi
-}
-
 clear_cov()
 {
 	COV_LOG="${OUT_DIR}/cov_log.txt"
@@ -336,6 +288,73 @@ collect_cov()
 }
 
 
+run_corr_test()
+{
+	RES_FILE="${SRC_DIR}/${NBASE}.corr.txt"
+	RUN_OUT="${OUT_DIR}/${NAME}.corr.txt"
+	DIFF_OUT="${OUT_DIR}/${NAME}.diff.txt"
+	
+	STATUS="${MAG}[WTF]${CLEAR}"
+	
+	"$BINARY" > "$RUN_OUT" 2>&1
+	RC=$?
+	if [ $RC = 0 ] ; then
+		
+		diff "$RUN_OUT" "$RES_FILE" > "$DIFF_OUT"
+		RC=$?
+		if [ $RC = 0 ] ; then
+			print_status $GREEN OK
+		else
+			print_status $RED DIFF
+		fi
+	else
+		print_status $RED "RC $RC"
+	fi
+}
+
+run_mem_test()
+{
+	MEM_OUT="${OUT_DIR}/${NAME}.mem.txt"
+	
+	STATUS="${MAG}[WTF]${CLEAR}"
+	
+	valgrind --leak-check=full --trace-children=yes \
+		"$BINARY" 2> "$MEM_OUT" 1> /dev/null
+	
+	RC=$?
+	if [ $RC = 0 ] ; then
+		if grep -Fq "ERROR SUMMARY: 0 errors from 0 contexts" "$MEM_OUT"
+		then
+			print_status $GREEN OK
+		else
+			print_status $YELLOW ERR
+		fi
+	else
+		print_status $RED "RC $RC"
+	fi
+}
+
+run_callg_test()
+{
+	
+	MEM_OUT="${OUT_DIR}/${NAME}.mem.txt"
+	
+	STATUS="${MAG}[WTF]${CLEAR}"
+	
+	valgrind --tool=callgrind \
+		--callgrind-out-file="${OUT_DIR}/${NAME}.callg.out" \
+		"$BINARY" \
+		> "${OUT_DIR}/${NAME}.callg.txt" 2>&1
+	
+	RC=$?
+	if [ $RC = 0 ] ; then
+		print_status $GREEN OK
+	else
+		print_status $RED "RC $RC"
+	fi
+}
+
+
 run_tests()
 {
 	STYPE=$1
@@ -359,6 +378,8 @@ run_tests()
 				then run_corr_test
 		elif [ "$STYPE" = "mem" ]
 			then run_mem_test
+		elif [ "$STYPE" = "callg" ]
+			then run_callg_test
 		else
 			echo "Unsupported test type $STYPE" >&2
 			exit 1

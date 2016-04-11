@@ -49,7 +49,9 @@ set(TGW_LOG_LEVEL_COUNT 128 CACHE STRING
 message("Build type: ${CMAKE_BUILD_TYPE}")
 
 if("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
+
 	add_definitions(-D_XOPEN_SOURCE=600)
+
 	
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} \
 		-Wall -Wextra -Werror \
@@ -64,10 +66,11 @@ if("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
 	set(CMAKE_C_FLAGS_COVERAGE   "--coverage -fprofile-arcs -ftest-coverage -g -O0")
 	set(CMAKE_CXX_FLAGS_COVERAGE "--coverage -fprofile-arcs -ftest-coverage -g -O0")
 	
-	set(CMAKE_C_FLAGS_MEMCHECK   "-g -O1")
-	set(CMAKE_CXX_FLAGS_MEMCHECK "-g -O1")
+	set(CMAKE_C_FLAGS_DEBOPT1    "-g -O1")
+	set(CMAKE_CXX_FLAGS_DEBOPT1  "-g -O1")
 	
-	#set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${C_OPTS} -O3")
+	set(CMAKE_C_FLAGS_DEBREL     "-g -O3")
+	set(CMAKE_CXX_FLAGS_DEBREL   "-g -O3")
 	
 elseif ("${CMAKE_C_COMPILER_ID}" MATCHES "Clang")
 
@@ -88,8 +91,13 @@ MARK_AS_ADVANCED(
 )
 
 MARK_AS_ADVANCED(
-	CMAKE_C_FLAGS_MEMCHECK
-	CMAKE_CXX_FLAGS_MEMCHECK
+	CMAKE_C_FLAGS_DEBOPT1
+	CMAKE_CXX_FLAGS_DEBOPT1
+)
+
+MARK_AS_ADVANCED(
+	CMAKE_C_FLAGS_DEBREL
+	CMAKE_CXX_FLAGS_DEBREL
 )
 
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")

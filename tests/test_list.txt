@@ -1,7 +1,7 @@
      # A comment line
 			# Tabs and spaces
 			
-test_name_incr.c corr,mem build
+test_name_incr.c corr,mem,callg build
 test_version_queries.c corr,mem build
 
 
