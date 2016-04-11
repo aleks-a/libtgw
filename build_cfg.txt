@@ -1,0 +1,17 @@
+# Comment line
+   # next is empty
+ 
+ callg -DCMAKE_BUILD_TYPE=DebRel
+   
+corr -DCMAKE_BUILD_TYPE=Debug
+corr -DCMAKE_BUILD_TYPE=Release
+
+cov -DCMAKE_BUILD_TYPE=Coverage
+ 
+mem -DCMAKE_BUILD_TYPE=DebOpt1
+
+
+
+
+internal -DCMAKE_BUILD_TYPE=Debug
+

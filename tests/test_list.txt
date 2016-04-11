@@ -1,0 +1,12 @@
+     # A comment line
+			# Tabs and spaces
+			
+test_name_incr.c corr,mem,callg build
+test_version_queries.c corr,mem build
+
+
+test_sys_tests/test_ok.c			corr_nocov		build	internal
+test_sys_tests/test_rc.c			corr_nocov		build	internal
+test_sys_tests/test_diff.c			corr_nocov		build	internal
+test_sys_tests/test_mem_ok.c		mem				build	internal
+test_sys_tests/test_mem_err.c		mem				build	internal

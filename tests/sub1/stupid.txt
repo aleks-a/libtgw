@@ -1,4 +1,0 @@
-# This is a sub-stupid.txt
-sub_test_1 corr autobuild=true
-sub_test_2 corr autobuild=true
-sub_test_3 corr autobuild=true autobuild-srcs="sub_test_3.c util.c common.c"

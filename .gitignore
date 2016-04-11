@@ -35,3 +35,8 @@ CMakeFiles/
 CMakeScripts/
 cmake_install.cmake 
 install_manifest.txt
+
+# Stupid
+stupid_build.cmake
+stupid/stupid-gen-cmake
+
